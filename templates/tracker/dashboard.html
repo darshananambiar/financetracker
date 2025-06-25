@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Finance Tracker{% endblock %}
+
+{% block content %}
+<div class="bg-white shadow-md rounded-lg p-6 mb-8">
+    <h1 class="text-3xl font-bold text-gray-900 mb-4">Dashboard for {{ current_month|date:"F Y" }}</h1>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-blue-100 p-5 rounded-lg shadow-sm flex items-center justify-between">
+            <div>
+                <p class="text-lg font-medium text-blue-800">Total Income</p>
+                <p class="text-2xl font-bold text-blue-900">${{ total_income|floatformat:2 }}</p>
+            </div>
+            <i class="fas fa-arrow-up text-blue-600 text-3xl"></i>
+        </div>
+        <div class="bg-red-100 p-5 rounded-lg shadow-sm flex items-center justify-between">
+            <div>
+                <p class="text-lg font-medium text-red-800">Total Expenses</p>
+                <p class="text-2xl font-bold text-red-900">${{ total_expenses|floatformat:2 }}</p>
+            </div>
+            <i class="fas fa-arrow-down text-red-600 text-3xl"></i>
+        </div>
+        <div class="bg-green-100 p-5 rounded-lg shadow-sm flex items-center justify-between">
+            <div>
+                <p class="text-lg font-medium text-green-800">Current Balance</p>
+                <p class="text-2xl font-bold text-green-900">${{ balance|floatformat:2 }}</p>
+            </div>
+            <i class="fas fa-wallet text-green-600 text-3xl"></i>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+
+
+        <!-- Budget Overview -->
+        <div class="bg-white shadow-md rounded-lg p-6">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">Budget Overview</h2>
+            {% if budgets %}
+                <ul class="divide-y divide-gray-200">
+                    {% for budget in budgets %}
+                        <li class="py-3">
+                            <div class="flex justify-between items-center mb-1">
+                                <p class="text-lg font-medium text-gray-800">{{ budget.category.name }}</p>
+                                <p class="text-md font-semibold text-gray-700">${{ budget.get_context_data.spent_amount|floatformat:2 }} / ${{ budget.amount|floatformat:2 }}</p>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                <div class="h-2.5 rounded-full {% if budget.get_context_data.percentage_used > 90 %}bg-red-500{% elif budget.get_context_data.percentage_used > 70 %}bg-yellow-500{% else %}bg-green-500{% endif %}" style="width: {{ budget.get_context_data.percentage_used }}%"></div>
+                            </div>
+                            <p class="text-sm text-gray-500 mt-1">
+                                {% if budget.get_context_data.remaining_amount > 0 %}
+                                    ${{ budget.get_context_data.remaining_amount|floatformat:2 }} remaining
+                                {% else %}
+                                    Over budget by ${{ budget.get_context_data.remaining_amount|floatformat:2|slice:"1:" }}
+                                {% endif %}
+                            </p>
+                        </li>
+                    {% endfor %}
+                </ul>
+                <div class="mt-4 text-right">
+                    <a href="{% url 'budget_list' %}" class="text-primary hover:text-blue-600 font-medium">View All Budgets &rarr;</a>
+                </div>
+            {% else %}
+                <p class="text-gray-600">No budgets set for this month. Create one to track your spending!</p>
+                <div class="mt-4">
+                    <a href="{% url 'add_budget' %}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                        <i class="fas fa-plus mr-2"></i> Add Budget
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Add Category - Finance Tracker{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-md">
+    <h1 class="text-3xl font-bold text-gray-900 mb-6">Add New Category</h1>
+    <form method="post" class="space-y-6">
+        {% csrf_token %}
+        
+        <div>
+            <label for="id_name" class="block text-sm font-medium text-gray-700">Category Name</label>
+            <input type="text" name="name" id="id_name" value="{{ form.name.value|default:'' }}" class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" required>
+            {% if form.name.errors %}
+                <p class="mt-2 text-sm text-red-600">{{ form.name.errors }}</p>
+            {% endif %}
+        </div>
+
+        <div>
+            <label for="id_type" class="block text-sm font-medium text-gray-700">Category Type</label>
+            <select name="type" id="id_type" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm rounded-md">
+                <option value="income" {% if form.type.value == 'income' %}selected{% endif %}>Income</option>
+                <option value="expense" {% if form.type.value == 'expense' %}selected{% endif %}>Expense</option>
+            </select>
+            {% if form.type.errors %}
+                <p class="mt-2 text-sm text-red-600">{{ form.type.errors }}</p>
+            {% endif %}
+        </div>
+
+        {% if form.non_field_errors %}
+            <div class="rounded-md bg-red-50 p-4">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-exclamation-circle text-red-400"></i>
+                    </div>
+                    <div class="ml-3">
+                        <h3 class="text-sm font-medium text-red-800">
+                            {{ form.non_field_errors.0 }}
+                        </h3>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+        <div class="flex justify-end space-x-3">
+            <a href="{% url 'category_list' %}" class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                Cancel
+            </a>
+            <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                Add Category
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}
